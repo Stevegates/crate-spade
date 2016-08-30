@@ -46,6 +46,8 @@ Thanks to:
 - [Discogs](https://www.discogs.com/) for the best record library
 - [Spotify](https://www.spotify.com/) for the best music metadata API
 - [Disconest](http://www.disconest.com/) for the original idea
+- AngularJS
+- Pouch DB
 
 ## Developer?
 If you want to participate, feel free to ask :)
