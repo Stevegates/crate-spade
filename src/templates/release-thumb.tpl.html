@@ -1,0 +1,8 @@
+<div ng-class="{'active':active}">
+  <label>{{releaseThumb.basic_information.artists[0].name}}
+    <br/>{{releaseThumb.basic_information.title}}</label>
+  <div class="thumb-img"
+       ng-class="{'active':actuve,'gray':!releaseThumb._metadata,'red':releaseThumb._metadata&&!releaseThumb._metadata.spotifyAlbum,'green':releaseThumb._metadata&&releaseThumb._metadata.spotifyAlbum}">
+    <img ng-src="{{thumb}}">
+  </div>
+</div>

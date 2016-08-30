@@ -1,0 +1,27 @@
+{
+  "name": "crate-spade",
+  "version": "0.0.1",
+  "description": "Get metadata for your Discogs record collection! Parses BPM, Key, Mode, Time Signature and much more from the Spotify API.",
+  "authors": [
+    "Felix Roos <flix91@gmail.com>"
+  ],
+  "license": "ISC",
+  "moduleType": [],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.7",
+    "angular-ui-router": "^0.3.1",
+    "angular-diff": "^1.0.1",
+    "angular-pouchdb": "^4.3.0"
+  },
+  "resolutions": {
+    "angular": "^1.5.7"
+  }
+}

@@ -1,0 +1,116 @@
+<div class="collection">
+  <div class="release" ng-class="{'active':selectedRelease}">
+    <div class="header">
+      <a class="btn btn-default pull-right" href ng-click="selectedRelease=null">X</a>
+      <div class="dig left" ng-click="previousRelease()">&lt;</div>
+      <img ng-src="{{selectedRelease.thumb}}" class="thumb">
+      <div class="dig right" ng-click="nextRelease()">&gt;</div>
+    </div>
+    <a class="btn btn-primary btn-block" href ng-click="getReleaseMeta(selectedRelease)">Metadaten holen</a>
+    <div ng-if="!selectedRelease._meta||!selectedRelease._meta.spotifyAlbum">
+      <h3>{{selectedRelease.title}}</h3>
+      <h4>{{selectedRelease.artists[0].name}}</h4>
+    </div>
+    <div ng-if="selectedRelease._meta&&selectedRelease._meta.spotifyAlbum"
+         title="{{selectedRelease.title}} - {{selectedRelease.artists[0].name}}">
+      <h3 ng-bind-html="selectedRelease._meta.spotifyAlbum.name | diff: selectedRelease.title"></h3>
+      <h4
+          ng-bind-html="selectedRelease._meta.spotifyAlbum.artists[0].name | diff: selectedRelease.artists[0].name"></h4>
+    </div>
+
+    <!--<h3>{{selectedRelease.artists[0].name}} - {{selectedRelease.title}}</h3>-->
+    <div ng-if="selectedRelease._meta.log">
+      <p ng-if="selectedRelease._meta.log.length"
+         ng-repeat="log in selectedRelease._meta.log track by $index" class="log warning">
+        {{log.msg || log}}
+        <!--<a href ng-if="log.verbose" ng-click="showVerbose(log)">more..</a>-->
+      </p>
+      <p ng-if="!selectedRelease._meta.log.length" class="log success">
+        Album synchronisiert!
+      </p>
+    </div>
+    <table class="table table-striped pull-right">
+      <thead>
+      <tr>
+        <th>Position</th>
+        <th>Title</th>
+        <th ng-if="selectedRelease._meta.audioFeatures">BPM</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="track in mergedTracks" class="track"
+          ng-class="{'spotify':!track.discogsTitle,'malicious':track.foreignMatch&&track.foreignMatch.similarity&&!track.foreignMatch.accept}"
+          ng-click="showTrackMeta($index,track)">
+        <td>{{track.position || $index+1}}</td>
+        <td ng-if="track.titleDiff"><span ng-bind-html="track.titleDiff"></span>
+          <!--<span ng-click="editTrack=!editTrack" ng-hide="editTrack">edit</span>
+          <span ng-if="selectedRelease._meta.spotifyAlbum&&editTrack">
+          &lt;!&ndash;<span>{{track.titleSimilarity}}%</span>&ndash;&gt;<br>
+          <select ng-model="track.spotifyTitle"
+                  ng-options="track.name as track.name for track in selectedRelease._meta.spotifyAlbum.tracks.items"></select>
+                    <span ng-click="editTrack=false">ok</span>
+                    <span ng-click="editTrack=false">(X)</span>
+            {{track.foreignMatch.value}}
+          </span>-->
+        </td>
+        <td ng-if="!track.titleDiff">{{track.discogsTitle || track.spotifyTitle}}
+          <!--<span ng-click="editTrack=!editTrack" ng-hide="editTrack||!track.discogsTitle">edit</span>
+          <span ng-if="selectedRelease._meta.spotifyAlbum&&editTrack">
+          &lt;!&ndash;<span>{{track.titleSimilarity}}%</span>&ndash;&gt;<br>
+          <select ng-model="track.spotifyTitle"
+                  ng-options="track.name as track.name for track in selectedRelease._meta.spotifyAlbum.tracks.items"></select>
+                    <span ng-click="editTrack=false">ok</span>
+                    <span ng-click="editTrack=false">(X)</span>
+            {{track.foreignMatch.value}}
+          </span>--></td>
+        <td ng-if="selectedRelease._meta.audioFeatures">{{track.audioFeatures.tempo}}</td>
+        <!-- TODO: add select input that contains all spotify track titles to select for each discogs title -->
+        <!-- TODO: this select input will only be visible when edit mode is active, which is triggered by a button in header-->
+        <!-- the selected title's index (in spotify album) will then be written to ._meta.keyMap[$index]
+        <!-- TODO: make tempo editable: change ._meta.tempos[$index] = entered bpm -->
+      </tr>
+      </tbody>
+    </table>
+    <div ng-if="trackMeta">
+      <h3>Track Meta Info</h3>
+      <ul>
+        <li>Spotify Title: {{trackMeta.track.spotifyTitle}}</li>
+        <li>Discogs Title: {{trackMeta.track.discogsTitle}}</li>
+        <li>Title Match: {{trackMeta.track.foreignMatch.similarity}}%</li>
+        <li>Tempo: {{trackMeta.audioFeatures.tempo}}bpm</li>
+        <li>Time Signature: {{trackMeta.audioFeatures.time_signature}}</li>
+        <li>Duration {{trackMeta.audioFeatures.duration_ms}}</li> <!-- TODO -->
+        <li>Danceability: {{trackMeta.audioFeatures.danceability}}</li>
+        <li>Energy: {{trackMeta.audioFeatures.energy}}</li>
+        <li>Key: {{trackMeta.audioFeatures.key}}</li>  <!-- TODO -->
+        <li>Mode: {{trackMeta.audioFeatures.mode}}</li>  <!-- TODO -->
+        <li>Loudness: {{trackMeta.audioFeatures.loudness}}</li>
+        <li>Speechiness: {{trackMeta.audioFeatures.speechiness}}</li>
+        <li>Acousticness: {{trackMeta.audioFeatures.acousticness}}</li>
+        <li>Instrumentalness: {{trackMeta.audioFeatures.instrumentalness}}</li>
+        <li>Liveness: {{trackMeta.audioFeatures.liveness}}</li>
+        <li>Valence: {{trackMeta.audioFeatures.valence}}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="collection" ng-class="{'collapsed':selectedRelease}">
+    <!--<h2>Collection Releases ({{releases.length}})</h2>
+    <p>Releases ohne BPM sind grau</p>-->
+    <div class="release-picker">
+      <div class="release-thumb" release-thumb="release" ng-repeat="release in releases track by $index"
+           ng-click="selectRelease(release)" active="isSelected(release)"
+      ></div>
+    </div><!--ng-hide="!release._metadata||!release._metadata.spotifyAlbum"-->
+
+    <div style="float:right">
+      <h2>Menu</h2>
+      <a ng-if="collectionLink" href="{{collectionLink}}" download="collection.json">Download Collection</a>
+      <a href ui-sref="tracks">Tracklist (Alpha)</a>
+    </div>
+    <h1>Disjockey</h1>
+    <input type="text" ng-model="username" placeholder="Username"><br/>
+    <input type="text" ng-model="token" placeholder="Token"><br/>
+    <button ng-click="getCollection(username,token)">Collection synchronisieren</button>
+    <button ng-click="audioFeatures()">Audio Features</button>
+  </div>
+</div>
