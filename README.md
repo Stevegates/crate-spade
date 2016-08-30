@@ -29,6 +29,8 @@ You will be able to manually fill in (at least) tempo for tracks that cannot be 
 - [x] display discogs collection of user
 - [x] get metadata for discogs releases
 - [x] handle different ordering of tracks in spotify/discogs album
+- [x] be able to export collection + metadata in one file
+- [ ] be able to import collection + metadata from one file
 - [ ] be able to manually search spotify album, if no match was found
 - [ ] be able to fill in tempo manually, if no match was found
 - [ ] be able to tag releases / tracks
@@ -37,9 +39,11 @@ You will be able to manually fill in (at least) tempo for tracks that cannot be 
 - [ ] be able to create set lists
 - [ ] english version
 
-## Early Screenshot
+## Early Screenshots
 Album View with tracklist + bpm:
 ![Album View](http://i.imgur.com/tS1rM47.jpg)
+All Tracks in Discogs Collection, sorted by Tempo!
+![Track View](http://i.imgur.com/OurZsaJ.png)
 
 ## Credits
 Thanks to:

@@ -2,6 +2,18 @@
  * Created by felix on 29.08.16.
  */
 angular.module('crate-spade.collection', ['pouchdb', 'diff'])
+  .filter('musicKey', function() {
+    var keys = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+    return function(value) {
+      return keys[value];
+    };
+  })
+  .filter('musicMode', function() {
+    var modes = ['Minor', 'Major'];
+    return function(value) {
+      return modes[value];
+    };
+  })
   .factory('Collection', function($q, $http, $filter, $interval, $timeout, $sce, $log, pouchDB) {
     //POUCH TEST
     // PouchDB.debug.enable('*');
@@ -156,16 +168,20 @@ angular.module('crate-spade.collection', ['pouchdb', 'diff'])
         }
         var merged = [], matchTreshold = 75, foreignMatch;
         var spotifyTracks = spotifyAlbum && spotifyAlbum.tracks ? spotifyAlbum.tracks.items : null;
-        var discogsTracks = discogsRelease ? discogsRelease.tracklist : null;
+        var discogsTracks = meta.tracklist;
         discogsTracks = discogsTracks.filter(function(track) {
           return track.type_ === 'track';
         });
         discogsTracks.forEach(function(discogsTrack, index) {
           foreignMatch = getForeignMatch(spotifyTracks, 'name', discogsTrack.title, matchTreshold);
           merged.push({
-            discogsTitle: discogsTrack.title,
-            spotifyTitle: foreignMatch.value,
-            foreignMatch: foreignMatch
+            discogsTitle:  discogsTrack.title,
+            spotifyTitle:  foreignMatch.value,
+            discogsArtist: discogsRelease.basic_information.artists.length ? discogsRelease.basic_information.artists[0].name : 'N/A',
+            spotifyArtist: spotifyAlbum.artists.length ? spotifyAlbum.artists[0].name : 'N/A',
+            discogsAlbum:  discogsRelease.basic_information.title,
+            spotifyAlbum:  spotifyAlbum.name,
+            foreignMatch:  foreignMatch
           });
         });
         merged.forEach(function(track, index) {
@@ -186,14 +202,14 @@ angular.module('crate-spade.collection', ['pouchdb', 'diff'])
         return merged;
       },
       getAllTracks:              function() {
+        var self = this;
         return getReleaseCache().then(function(releaseCache) {
           var tracks = [];
           releaseCache.releases.forEach(function(release) {
             if (release._metadata && release._metadata.spotifyAlbum && release._metadata.audioFeatures) {
-              release._metadata.spotifyAlbum.tracks.items.forEach(function(track, index) {
-                //TODO only push tracks that are on the discogs release + match features
-                //TODO use / change combineDiscogsReleaseWithSpotifyAlbum
-                track._audioFeatures = release._metadata.audioFeatures[index];
+              var merged = self.combineDiscogsWithSpotify(release, release._metadata.spotifyAlbum, release._metadata);
+              // tracks.concat(merged);
+              merged.forEach(function(track) {
                 tracks.push(track);
               });
             }

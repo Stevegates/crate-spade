@@ -1,18 +1,27 @@
 <div class="tracks">
   <h1>Tracks</h1>
+  <a href ng-click="sort()">SORT!</a>
   <table class="table table-striped" ng-if="tracks">
     <thead>
     <tr>
+      <th>#</th>
       <th>Artist</th>
       <th>Title</th>
+      <th>Album</th>
       <th>BPM</th>
+      <th>Key</th>
+      <th>Match</th>
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="track in tracks track by $index">
-      <td>{{track.artists[0].name}}</td>
-      <td>{{track.name}}</td>
-      <td>{{track._audioFeatures.tempo}}</td>
+    <tr ng-repeat="track in tracks track by $index" class="track" ng-class="{'malicious':!track.foreignMatch.accept}">
+      <td>{{$index+1}}</td>
+      <td ng-bind-html="track.discogsArtist | diff:track.spotifyArtist"></td>
+      <td ng-bind-html="track.discogsTitle | diff:track.spotifyTitle"></td>
+      <td ng-bind-html="track.discogsAlbum | diff:track.spotifyAlbum"></td>
+      <td>{{track.audioFeatures.tempo | number}}</td>
+      <td>{{track.audioFeatures.key | musicKey}} {{track.audioFeatures.mode | musicMode}}</td>
+      <td>{{track.foreignMatch.similarity | number}}%</td>
     </tr>
     </tbody>
   </table>

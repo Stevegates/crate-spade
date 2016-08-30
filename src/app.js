@@ -35,6 +35,11 @@ angular.module('crate-spade', ['ui.router', 'crate-spade.templates', 'crate-spad
     
   }).controller('TracksCtrl', function($scope, tracks) {
   $scope.tracks = tracks;
+  $scope.sort = function() {
+    $scope.tracks.sort(function(a, b) {
+      return a.audioFeatures.tempo < b.audioFeatures.tempo ? -1 : +1;
+    });
+  };
 }).controller('CollectionCtrl', function($scope, Collection, releaseCache, pouchDB, $sce, $q, $interval, $http, $filter,
   $log) {
   
@@ -203,11 +208,6 @@ angular.module('crate-spade', ['ui.router', 'crate-spade.templates', 'crate-spad
   };
   $scope.unselectRelease = function() {
     $scope.selectedRelease = null;
-  };
-  $scope.audioFeatures = function() {
-    Collection.getAllTracks().then(function(tracks) {
-      $scope.tracks = tracks;
-    });
   };
   $scope.isSelected = function(release) {
     return $scope.selectedRelease && release.id === $scope.selectedRelease.id;
