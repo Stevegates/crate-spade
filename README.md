@@ -1,5 +1,4 @@
 # crate-spade
-<img src="http://i.imgur.com/3LCkQSA.jpg" alt="Crate Spade Cheap Logo" style="width: 50px;height:50px;float:left"/>
 Get metadata for your Discogs record collection! Parses BPM, Key, Mode, Time Signature and much more from the Spotify API.
 Based on the idea of [Disconest](http://www.disconest.com/), this app combines Spotify Album Metadata with your whole Discogs Collection. The app is currently in early development, and currently in german language only!
 
