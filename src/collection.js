@@ -162,13 +162,15 @@ angular.module('crate-spade.collection', ['pouchdb', 'diff'])
         return release;
       },
       combineDiscogsWithSpotify: function(discogsRelease, spotifyAlbum, meta) {
+        console.debug('combine ', discogsRelease, spotifyAlbum, meta);
+        meta = meta || {};
         if (!spotifyAlbum && !discogsRelease) {
           console.warn('could not merge albums, malicious data', discogsRelease, spotifyAlbum);
           return [];
         }
         var merged = [], matchTreshold = 75, foreignMatch;
         var spotifyTracks = spotifyAlbum && spotifyAlbum.tracks ? spotifyAlbum.tracks.items : null;
-        var discogsTracks = meta.tracklist;
+        var discogsTracks = meta.tracklist || [];
         discogsTracks = discogsTracks.filter(function(track) {
           return track.type_ === 'track';
         });
@@ -177,10 +179,13 @@ angular.module('crate-spade.collection', ['pouchdb', 'diff'])
           merged.push({
             discogsTitle:  discogsTrack.title,
             spotifyTitle:  foreignMatch.value,
-            discogsArtist: discogsRelease.basic_information.artists.length ? discogsRelease.basic_information.artists[0].name : 'N/A',
-            spotifyArtist: spotifyAlbum.artists.length ? spotifyAlbum.artists[0].name : 'N/A',
-            discogsAlbum:  discogsRelease.basic_information.title,
-            spotifyAlbum:  spotifyAlbum.name,
+            discogsArtist: discogsRelease && discogsRelease.basic_information &&
+                           discogsRelease.basic_information.artists.length ? discogsRelease.basic_information.artists[0].name : 'N/A',
+            spotifyArtist: spotifyAlbum && spotifyAlbum.artists &&
+                           spotifyAlbum.artists.length ? spotifyAlbum.artists[0].name : 'N/A',
+            discogsAlbum:  discogsRelease &&
+                           discogsRelease.basic_information ? discogsRelease.basic_information.title : 'N/A',
+            spotifyAlbum:  spotifyAlbum && spotifyAlbum.name,
             foreignMatch:  foreignMatch
           });
         });
